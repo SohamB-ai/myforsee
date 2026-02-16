@@ -21,6 +21,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import api from "@/lib/api";
 
 export default function OutputPreview() {
     const location = useLocation();
@@ -137,19 +138,13 @@ export default function OutputPreview() {
 
         try {
             // Call the LLM endpoint to generate dashboard data
-            const response = await fetch("http://localhost:5000/api/generate-dashboard", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    systemInfo,
-                    predictionResult: result,
-                    sensorInputs: state?.inputs || {}
-                })
+            const response = await api.post("/generate-dashboard", {
+                systemInfo,
+                predictionResult: result,
+                sensorInputs: state?.inputs || {}
             });
 
-            if (!response.ok) throw new Error("Failed to generate dashboard intelligence");
-
-            const intelligence = await response.json();
+            const intelligence = response.data;
 
             const deviceId = `${systemInfo.id}-${Date.now()}`;
             addDevice(

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BoltStyleChat } from "@/components/ui/bolt-style-chat";
+import api from "@/lib/api";
 
 interface Message {
   role: 'user' | 'model';
@@ -30,18 +31,15 @@ export default function ChatbotPage() {
         parts: [{ text: m.text }]
       }));
 
-      const response = await fetch('http://localhost:5000/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, history })
+      const response = await api.post('/chat', {
+        message: text,
+        history
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Server Error: ${response.status}`);
-      }
+      const data = response.data;
 
-      const data = await response.json();
+      setMessages([...newMessages, { role: 'model', text: data.response }]);
+    } catch (error: any) {
 
       setMessages([...newMessages, { role: 'model', text: data.response }]);
     } catch (error: any) {

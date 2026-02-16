@@ -10,6 +10,7 @@ import {
     User as FirebaseUser
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import api from "@/lib/api";
 
 export type UserRole = 'member';
 
@@ -43,15 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const syncUserWithDb = async (userData: User) => {
         try {
-            await fetch('http://localhost:5000/api/users/sync', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    firebaseUid: userData.id,
-                    name: userData.name,
-                    email: userData.email,
-                    avatarUrl: userData.avatarUrl
-                })
+            await api.post('/users/sync', {
+                firebaseUid: userData.id,
+                name: userData.name,
+                email: userData.email,
+                avatarUrl: userData.avatarUrl
             });
         } catch (error) {
             console.error("Failed to sync user with MongoDB:", error);

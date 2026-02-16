@@ -19,6 +19,7 @@ import { TemporalDynamicsCard } from "@/components/dashboard/TemporalDynamicsCar
 import { OperationalContextCard, OperationalContextValues } from "@/components/dashboard/OperationalContextCard";
 import { SpectralDataCard, SpectralDataValues } from "@/components/dashboard/SpectralDataCard";
 import { EventCorrelationCard, EventCorrelationValues } from "@/components/dashboard/EventCorrelationCard";
+import api from "@/lib/api";
 
 interface PredictionResult {
   rul: number;
@@ -132,29 +133,19 @@ export default function SystemPage() {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     try {
-      const response = await fetch('http://localhost:5000/api/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await api.post('/predict', {
+        systemInfo: {
+          id: slug,
+          name: systemProfile.title,
         },
-        body: JSON.stringify({
-          systemInfo: {
-            id: slug,
-            name: systemProfile.title,
-          },
-          inputs: sensorValues,
-          temporalContext: temporalValues,
-          operationalContext,
-          spectralData,
-          eventHistory: eventCorrelation
-        }),
+        inputs: sensorValues,
+        temporalContext: temporalValues,
+        operationalContext,
+        spectralData,
+        eventHistory: eventCorrelation
       });
 
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const result = await response.json();
+      const result = response.data;
 
       setIsLoading(false);
       navigate("/output-preview", {
