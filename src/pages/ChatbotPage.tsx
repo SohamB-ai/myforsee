@@ -40,9 +40,6 @@ export default function ChatbotPage() {
 
       setMessages([...newMessages, { role: 'model', text: data.response }]);
     } catch (error: any) {
-
-      setMessages([...newMessages, { role: 'model', text: data.response }]);
-    } catch (error: any) {
       console.error("Chat Error:", error);
       const errorMessage = error.message || "Connection Failed";
       setMessages([...newMessages, { role: 'model', text: `Error: ${errorMessage}. Please check the backend console.` }]);
