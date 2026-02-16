@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with a custom config
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://myforsee.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
